@@ -22,3 +22,7 @@ Cada **commit** del proyecto será acompañado por un comentario explicativo de 
 > PRIMER COMMIT: juego Ta-Te-Ti funcional
 
 https://github.com/DarioFGonzalez/Juegos-basicos/commit/b0b317cd288cb6207fd67d8eb286b72c3b24e25d#commitcomment-142452251
+
+> SEGUNDO COMMIT: Jugar contra la maquina agregado, opción 1 ó 2 players
+
+https://github.com/DarioFGonzalez/Juegos-basicos/commit/5a0d297081a46b32089893ecea15aef26b28bcbc#commitcomment-142489130
