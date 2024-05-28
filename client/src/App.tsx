@@ -1,31 +1,46 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import './index.css';
 
 const GRID = Array.from(Array(9).keys());
 
 function App()
 {
   const [ squares, setSquares ] = useState( [ '', '', '', '', '', '', '', '', '',  ] )
+  const [ players, setPlayers ] = useState( 'none' );
+  const [ inicio, setInicio ] = useState( true );
+  const [ turnoMaquina, setTurnoMaquina ] = useState( false );
   const [ turno, setTurno ] = useState( false );
   const [ winner, setWinner ] = useState( 'none' );
+  const sign = [ 'Ta', '', '', '', 'Te', '', '', '', 'Ti',  ]
 
   const writeSquare = (i: number) =>
   {
     let x = 'none';
-    if(turno)
+    
+    if(players=='one')
     {
       let aux = squares;
-      aux[i]='O';
+      aux[i]= turno ? 'O' : 'X';
       setSquares( aux );
-      x = winnerBoard('O');
+      x = winnerBoard( turno ? 'O' : 'X' );
     }
     else
     {
-      let aux = squares;
-      aux[i]='X';
-      setSquares( aux );
-      x = winnerBoard('X');
+      if(turno)
+      {
+        let aux = squares;
+        aux[i]='O';
+        setSquares( aux );
+        x = winnerBoard('O');
+      }
+      else
+      {
+        let aux = squares;
+        aux[i]='X';
+        setSquares( aux );
+        x = winnerBoard('X');
+      }
     }
-    
 
     if(x=='none')
     {
@@ -99,8 +114,25 @@ function App()
     return winner;
   }
 
-  const restart = () =>
+  const restart = (players: string) =>
   {
+    setPlayers(players);
+    players=='none' ? setInicio(true) : setInicio(false);
+    if(players=='one')
+    {
+      if( Math.floor( Math.random() * ( 1 - 0 + 1 ) + 0 ) == 0 )
+      {
+        setTurnoMaquina( false );
+        setTurno(!turno);
+        setTurno(true);
+      }
+      else
+      {
+        setTurnoMaquina( true );
+        setTurno(!turno);
+        setTurno(true);
+      }
+    }
     let aux = squares;
     for(let i=0; i<9; i++)
     {
@@ -109,6 +141,44 @@ function App()
     setSquares( aux );
     setWinner( 'none' );
   }
+
+  useEffect( () =>
+    {
+      console.log( "Turno: ", turno, "\nOsea le toca a: ", turno?'O':'X', "\nTurno de la máquina: ", turnoMaquina);
+      
+      if( players=='one' && turno==turnoMaquina && winner!='Empate' && winner!='O' && winner!='X')
+      {
+        let aux = squares;
+        let available = [];
+        for(let j=0; j<9; j++)
+        {
+          if(aux[j]=='')
+          {
+            available.push( j );
+          }
+        }
+        let casilleroElegido =  Math.floor( Math.random() * ( ( available.length - 1 ) - 0 + 1 ) + 0 );
+        aux[ available[casilleroElegido] ] = turno ? 'O' : 'X';
+        setSquares( aux );
+        let x = winnerBoard( turno ? 'O' : 'X' );
+  
+        if(x=='none')
+        {
+          if(!checkBoard())
+          {
+            alert('¡Sin mas movimientos!');
+            setWinner('Empate');
+          }
+          setTurno(!turno);
+        }
+        else
+        {
+          alert( `¡Gana el jugador ${x}!` );
+          console.log( `¡Gana el jugador ${x}!` );
+          setWinner( x );
+        }
+      }
+    },[turno, restart])
 
   return (
     <div>
@@ -119,15 +189,27 @@ function App()
       </div>
 
       <main>
-        {GRID.map((i) => (
-          <div key={i} className="square" onClick={() => { (squares[i]=='' && winner=='none') && writeSquare(i) }}>
+        { inicio && GRID.map((i) => (
+          <div key={i} className="square" >
+            {sign[i]}
+          </div>
+        ))}
+        {players == 'one' && GRID.map((i) => (
+          <div key={i}  className="verde" onClick={() => { (squares[i]=='' && winner=='none') && writeSquare(i) }}>
+            {squares[i]}
+          </div>
+        ))}
+        {players == 'two' && GRID.map((i) => (
+          <div key={i} className="azul" onClick={() => { (squares[i]=='' && winner=='none') && writeSquare(i) }}>
             {squares[i]}
           </div>
         ))}
       </main>
 
       <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-        {winner!='none' && <button onClick={restart}> ♫ Otra vez ♪</button>}
+        { winner!='none' && <button onClick={()=> restart('none') }> Inicio </button>}
+        { (inicio || winner!='none') && <button onClick={()=> restart('one') }> Un jugador </button>}
+        { (inicio || winner!='none') && <button onClick={()=> restart('two') }> Dos jugadores </button>}
       </div>
       
     </div>

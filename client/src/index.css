@@ -61,6 +61,16 @@ button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
 }
 
+.verde
+{
+  background-color: rgba(172, 255, 47, 0.486);
+}
+
+.azul
+{
+  background-color: #646cff;
+}
+
 @media (prefers-color-scheme: light) {
   :root {
     color: #213547;
