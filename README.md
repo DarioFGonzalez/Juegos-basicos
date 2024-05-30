@@ -26,3 +26,7 @@ https://github.com/DarioFGonzalez/Juegos-basicos/commit/b0b317cd288cb6207fd67d8e
 > SEGUNDO COMMIT: Jugar contra la maquina agregado, opción 1 ó 2 players
 
 https://github.com/DarioFGonzalez/Juegos-basicos/commit/5a0d297081a46b32089893ecea15aef26b28bcbc#commitcomment-142489130
+
+> TERCER COMMIT: Estructura para agregar mas juegos agregada, buscaminas version Alpha
+
+https://github.com/DarioFGonzalez/Juegos-basicos/commit/f4fd2a40e92f0f6cf5487c36a0aa27033d28d1bf#commitcomment-142536882
