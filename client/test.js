@@ -21,8 +21,8 @@ for(let i=0; i<3; i++)
 // Buscar en una posición inexistente de un array
 
 /*
-let a = [ 0, 1, 2, "💣" ];
-console.log( a[-2]=="💣", a[-1], a[0], a[1]==1, a[2], a[3]=='💣', a[4]);
+let a = [ 0, 1, 2, "💣" , [ 0, 1, 2] ];
+console.log( a[-2]=="💣", a[-1], a[0], a[1]==1, a[2], a[3]=='💣', a[4][0] );
 */
 
 // array.length
