@@ -30,3 +30,7 @@ https://github.com/DarioFGonzalez/Juegos-basicos/commit/5a0d297081a46b32089893ec
 > TERCER COMMIT: Estructura para agregar mas juegos agregada, buscaminas version Alpha
 
 https://github.com/DarioFGonzalez/Juegos-basicos/commit/f4fd2a40e92f0f6cf5487c36a0aa27033d28d1bf#commitcomment-142536882
+
+> CUARTO COMMIT: Buscaminas beta, contador de proximidad + game over
+
+https://github.com/DarioFGonzalez/Juegos-basicos/commit/72934a01666bdc9c4cdbe81fb76d1d4e7f22cfe7#commitcomment-142543632
