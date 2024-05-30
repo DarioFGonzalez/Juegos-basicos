@@ -6,27 +6,56 @@ export const Buscaminas = () =>
     const [ mapa, setMapa ] = useState( Array.from( {length: 3}, () => Array.from( Array(3), ()=> '' ) ) ); 
     const [ start, setStart ] = useState<boolean>( false );
     const [ endGame, setEndGame ] = useState( false );
-
+    const [ message, setMessage ] = useState( '' );
     let sign = Array.from( {length: 3}, () => Array.from( Array(3), ()=> '' ) );
     sign[1][0]='Busca';
     sign[1][1]='💣';
     sign[1][2]='Minas';
 
-    const markIt = ( linea: number, posicion: number ) =>
+    const markIt = ( linea: number, posicion: number, e: React.MouseEvent<HTMLDivElement> ) =>
     {
-        
-        if( mapa[linea][posicion]=='' )
+        const isRightClick = e.nativeEvent.button === 2 || e.nativeEvent.which === 3;
+
+        if(isRightClick)
         {
-            let aux = mapa.map( (w, x) => w.map( (y, z) => (x==linea && z==posicion) ? checkAround(linea, posicion) : y  ) );
-            setMapa( aux );
+            if( mapa[linea][posicion]=='' )
+            {
+                let aux = mapa.map( (w, x) => w.map( (y, z) => (x==linea && z==posicion) ? "⚪🚩" : y  ) );
+                setMapa( aux );
+            }
+            if( mapa[linea][posicion]=='💣' )
+            {
+                let aux = mapa.map( (w, x) => w.map( (y, z) => (x==linea && z==posicion) ? "💣🚩" : y  ) );
+                setMapa( aux );
+            }
+            if( mapa[linea][posicion]=='⚪🚩' )
+            {
+                let aux = mapa.map( (w, x) => w.map( (y, z) => (x==linea && z==posicion) ? "" : y  ) );
+                setMapa( aux );
+            }
+            if( mapa[linea][posicion]=='💣🚩' )
+            {
+                let aux = mapa.map( (w, x) => w.map( (y, z) => (x==linea && z==posicion) ? "💣" : y  ) );
+                setMapa( aux );
+            }
         }
         else
         {
-            if( mapa[linea][posicion]=='💣' )
+            if( mapa[linea][posicion]=='' )
             {
-                let aux = mapa.map( (w, x) => w.map( (y, z) => (x==linea && z==posicion) ? '💥' : y  ) );
+                let aux = mapa.map( (w, x) => w.map( (y, z) => (x==linea && z==posicion) ? checkAround(linea, posicion) : y  ) );
                 setMapa( aux );
-                setEndGame( true );
+                checkForVictory(aux);
+            }
+            else
+            {
+                if( mapa[linea][posicion]=='💣' )
+                {
+                    let aux = mapa.map( (w, x) => w.map( (y, z) => (x==linea && z==posicion) ? '💥' : y  ) );
+                    setMapa( aux );
+                    setEndGame( true );
+                    setMessage( '💥 ¡Perdiste! 💥' );
+                }
             }
         }
     }
@@ -40,7 +69,7 @@ export const Buscaminas = () =>
             {
                 if( i==-1 && linea+i>=0 || i==0 || i==1 && linea+i<3 )
                 {
-                    if( mapa[linea+i][posicion+j]=='💣' || mapa[linea+i][posicion+j]=='💥' )
+                    if( mapa[linea+i][posicion+j]=='💣' || mapa[linea+i][posicion+j]=='💣🚩' )
                     {
                         bombsAround++;
                     }
@@ -50,8 +79,29 @@ export const Buscaminas = () =>
         return String(bombsAround);
     }
 
+    const checkForVictory = ( MapaActualizado: any ) =>
+    {
+        let result = true;
+        for(let i=0; i<3; i++)
+        {
+            for(let j=0; j<3; j++)
+            {
+                if( MapaActualizado[i][j]=='' || MapaActualizado[i][j]=='⚪🚩' )
+                {
+                    result = false;
+                }
+            }
+        }
+        console.log(MapaActualizado);
+        console.log("resultado: ",result);
+        
+        result && setMessage( '¡Ganaste!' );
+        result && setEndGame( true );
+    }
+
     const startGame = () =>
     {
+        setMessage( '' );
         setStart(true);
         setEndGame(false);
         let aux = Array.from( {length: 3}, () => Array.from( Array(3), ()=> '' ) );
@@ -74,16 +124,19 @@ export const Buscaminas = () =>
             <Link to='/home'>
                 <button> {"<"} </button>
             </Link>
+            {message!='' && <h1> {message} </h1>}
 
             <main>
                 { !start && sign.map( (pos) => pos.map( (linea, y) => (
                 <div key={y} >
                     {linea}
                 </div> ) ) ) }
+
                 { (start && !endGame) && mapa.map( (pos, z) => pos.map( (linea, y) => (
-                <div key={y} onClick={()=> markIt(z, y)}>
-                    {linea=='💣'? '' : linea}
+                <div key={y} onContextMenu={(e)=> {e.preventDefault(); markIt(z, y, e);} } onClick={(e)=> markIt(z, y, e)}>
+                    { linea=='💣'  ? '' : linea=='💣🚩' || linea=='⚪🚩' ? '🚩' : linea }
                 </div> ) ) ) }
+
                 { (endGame && start) && mapa.map( (pos, z) => pos.map( (linea, y) => (
                 <div key={y} >
                     {linea=='💣'? '' : linea}
@@ -94,6 +147,8 @@ export const Buscaminas = () =>
                 {!start && <button onClick={startGame}> START </button>}
                 {start && <button onClick={()=>setStart(false)}> STOP </button>}
                 {endGame && <button onClick={startGame}> RESTART </button>}
+                <button onClick={()=>console.log( Number(mapa[1][1]) )}> MAPA </button>
+                <button onClick={()=>console.log( mapa )}> MAPAa </button>
             </div>
         </div>
     )
