@@ -38,3 +38,7 @@ https://github.com/DarioFGonzalez/Juegos-basicos/commit/72934a01666bdc9c4cdbe81f
 > QUINTO COMMIT: Buscaminas funcionando. Victoria, derrota, contador de proximidad, banderines agregados
 
 https://github.com/DarioFGonzalez/Juegos-basicos/commit/a4353fc02ed9399305ad1fddd942547700b4122f#commitcomment-142572172
+
+> SEXTO COMMIT: Buscaminas + dificultades, SpaceShooter alpha
+
+https://github.com/DarioFGonzalez/Juegos-basicos/commit/4b418bfc16c219293d6ff8e4c96e681b4a4fa6f1#commitcomment-143035108
