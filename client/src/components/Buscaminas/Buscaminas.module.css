@@ -1,0 +1,25 @@
+.columna
+{
+    display: flex;
+    flex-direction: column;
+}
+
+.fila
+{
+    background-color: rgb(196, 187, 187);
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+}
+
+.celda
+{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 1px solid blue;
+    border-radius: 5px;
+    padding: .5px;
+    width: 30px;
+    height: 30px;
+}

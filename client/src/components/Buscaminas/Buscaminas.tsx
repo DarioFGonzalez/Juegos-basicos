@@ -1,13 +1,15 @@
 import { useState } from "react"
 import { Link } from "react-router-dom";
+import Styles from './Buscaminas.module.css';
 
 export const Buscaminas = () =>
 {
-    const [ mapa, setMapa ] = useState( Array.from( {length: 3}, () => Array.from( Array(3), ()=> '' ) ) ); 
+    const [ mapa, setMapa ] = useState( Array.from( {length: 9}, () => Array.from( Array(9), ()=> '' ) ) ); 
     const [ start, setStart ] = useState<boolean>( false );
     const [ endGame, setEndGame ] = useState( false );
     const [ message, setMessage ] = useState( '' );
-    let sign = Array.from( {length: 3}, () => Array.from( Array(3), ()=> '' ) );
+    const [ difficulty, setDifficulty ] = useState(1);
+    let sign = Array.from( {length: 9}, () => Array.from( Array(9), ()=> '' ) );
     sign[1][0]='Busca';
     sign[1][1]='💣';
     sign[1][2]='Minas';
@@ -15,6 +17,7 @@ export const Buscaminas = () =>
     const markIt = ( linea: number, posicion: number, e: React.MouseEvent<HTMLDivElement> ) =>
     {
         const isRightClick = e.nativeEvent.button === 2 || e.nativeEvent.which === 3;
+        console.log(`mapa[${linea}][${posicion}] = ${mapa[linea][posicion]}`)
 
         if(isRightClick)
         {
@@ -67,7 +70,7 @@ export const Buscaminas = () =>
         {
             for(let j=-1; j<2; j++)
             {
-                if( i==-1 && linea+i>=0 || i==0 || i==1 && linea+i<3 )
+                if( i==-1 && linea+i>=0 || i==0 || i==1 && linea+i<mapa.length )
                 {
                     if( mapa[linea+i][posicion+j]=='💣' || mapa[linea+i][posicion+j]=='💣🚩' )
                     {
@@ -82,9 +85,9 @@ export const Buscaminas = () =>
     const checkForVictory = ( MapaActualizado: any ) =>
     {
         let result = true;
-        for(let i=0; i<3; i++)
+        for(let i=0; i<mapa.length; i++)
         {
-            for(let j=0; j<3; j++)
+            for(let j=0; j<mapa[0].length; j++)
             {
                 if( MapaActualizado[i][j]=='' || MapaActualizado[i][j]=='⚪🚩' )
                 {
@@ -93,29 +96,46 @@ export const Buscaminas = () =>
             }
         }
         console.log(MapaActualizado);
-        console.log("resultado: ",result);
         
         result && setMessage( '¡Ganaste!' );
         result && setEndGame( true );
     }
 
-    const startGame = () =>
+    const startGame = (difficultad: number) =>
     {
         setMessage( '' );
         setStart(true);
         setEndGame(false);
-        let aux = Array.from( {length: 3}, () => Array.from( Array(3), ()=> '' ) );
-        let c = 0;
-        while( c<3 )
+        let bombs = 0;
+        if(difficultad==1)
         {
-            let first = Math.floor( Math.random() * ( 2 - 0 + 1 ) + 0 );
-            let second = Math.floor( Math.random() * ( 2 - 0 + 1 ) + 0 )
+            bombs=10;
+            setDifficulty(1);
+        }
+        if(difficultad==2)
+        {
+            bombs=40;
+            setDifficulty(2);
+        }
+        if(difficultad==3)
+        {
+            bombs=99;
+            setDifficulty(3);
+        }
+        let aux = Array.from( {length: difficultad==1 ? 9 : difficultad==2 ? 16 : 16}, () => Array.from( Array(difficultad==1 ? 9 : difficultad==2 ? 16 : 30), ()=> '' ) );
+        let c = 0;
+        while( c < bombs )
+        {
+            let first = Math.floor( Math.random() * ( ( aux.length - 1 ) - 0 + 1 ) + 0 );
+            let second = Math.floor( Math.random() * ( ( aux[1].length -1 ) - 0 + 1 ) + 0 )
             if(aux[first][second]=='')
             {
                 aux[first][second]='💣';
                 c++;
             }
         }
+        console.log(`¡${bombs} Bombas plantadas! (${c}) Buena suerte`);
+        
         setMapa(aux);        
     }
 
@@ -126,29 +146,28 @@ export const Buscaminas = () =>
             </Link>
             {message!='' && <h1> {message} </h1>}
 
-            <main>
-                { !start && sign.map( (pos) => pos.map( (linea, y) => (
-                <div key={y} >
-                    {linea}
-                </div> ) ) ) }
+            <div className={Styles.columna}>
 
-                { (start && !endGame) && mapa.map( (pos, z) => pos.map( (linea, y) => (
-                <div key={y} onContextMenu={(e)=> {e.preventDefault(); markIt(z, y, e);} } onClick={(e)=> markIt(z, y, e)}>
-                    { linea=='💣'  ? '' : linea=='💣🚩' || linea=='⚪🚩' ? '🚩' : linea }
-                </div> ) ) ) }
+                { (start && !endGame) && 
+                mapa.map( (fila, y) =>
+                    <div key={y} className={Styles.fila}>
+                        {fila.map( (celda, z) =>
+                        <label className={Styles.celda} onContextMenu={(e)=> {e.preventDefault(); markIt(y, z, e);} } onClick={(e)=> markIt(y, z, e)} key={z} >
+                           { celda=='💣'  ? '' : celda=='💣🚩' || celda=='⚪🚩' ? '🚩' : celda }
+                        </label>)}
+                    </div>)}
 
-                { (endGame && start) && mapa.map( (pos, z) => pos.map( (linea, y) => (
-                <div key={y} >
-                    {linea=='💣'? '' : linea}
-                </div> ) ) ) }
-            </main>
+            </div>
 
             <div>
-                {!start && <button onClick={startGame}> START </button>}
+                {/* {!start && <button onClick={startGame}> START </button>} */}
+                {!start && <button onClick={()=>startGame(1)}> Fácil </button>}
+                {!start && <button onClick={()=>startGame(2)}> Medio </button>}
+                {!start && <button onClick={()=>startGame(3)}> Difícil </button>}
+
                 {start && <button onClick={()=>setStart(false)}> STOP </button>}
-                {endGame && <button onClick={startGame}> RESTART </button>}
-                <button onClick={()=>console.log( Number(mapa[1][1]) )}> MAPA </button>
-                <button onClick={()=>console.log( mapa )}> MAPAa </button>
+                {endGame && <button onClick={()=>startGame(difficulty)}> RESTART </button>}
+                <button onClick={ ()=>console.log( mapa ) }> MAPA </button>
             </div>
         </div>
     )

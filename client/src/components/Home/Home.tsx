@@ -13,6 +13,9 @@ export const Home = () =>
             <Link to='/buscaminas'>
                 <button> 💣 Buscaminas 💥 </button>
             </Link>
+            <Link to='/test'>
+                <button> 🚧 TEST 🚧 </button>
+            </Link>
         </div>
     )
 }
