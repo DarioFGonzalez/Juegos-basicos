@@ -34,3 +34,7 @@ https://github.com/DarioFGonzalez/Juegos-basicos/commit/f4fd2a40e92f0f6cf5487c36
 > CUARTO COMMIT: Buscaminas beta, contador de proximidad + game over
 
 https://github.com/DarioFGonzalez/Juegos-basicos/commit/72934a01666bdc9c4cdbe81fb76d1d4e7f22cfe7#commitcomment-142543632
+
+> QUINTO COMMIT: Buscaminas funcionando. Victoria, derrota, contador de proximidad, banderines agregados
+
+https://github.com/DarioFGonzalez/Juegos-basicos/commit/a4353fc02ed9399305ad1fddd942547700b4122f#commitcomment-142572172
