@@ -29,7 +29,8 @@ export const Test = () =>
     {
         let aux = mapa;
         aux[2][1] = '^';
-        [ aux[1][0], aux[1][2] ] = Array(2).fill('-'); 
+        // [ aux[1][0], aux[1][2], aux[3][3] ] = Array(3).fill('-');    //Paredes
+        [ aux[7][3], aux[5][5], aux[8][1], aux[3][0], aux[4][2], aux[8][8] ] = Array(6).fill('🌑'); 
         setMapa(aux);
     }
 
@@ -144,11 +145,13 @@ export const Test = () =>
                     movimiento = [ -1, 0, "↑" ];
                     break;
             }
+
             if
             (
                 (Number(player[1]) + Number(movimiento[1]) < mapa[0].length && Number(player[1]) + Number(movimiento[1]) >= 0) &&   //check horizontal
                 (Number(player[0]) + Number(movimiento[0]) < mapa.length && Number(player[0]) + Number(movimiento[0]) >= 0) &&      //check vertical
-                mapa[Number(player[0]) + Number(movimiento[0])][Number(player[1]) + Number(movimiento[1])]!='-'                         //check for a wall
+                (mapa[Number(player[0]) + Number(movimiento[0])][Number(player[1]) + Number(movimiento[1])]!='-' ||                 //check for a wall
+                mapa[Number(player[0]) + Number(movimiento[0])][Number(player[1]) + Number(movimiento[1])]=='🌑' )                  //check for an enemy
             )
             {
                 let bulletAt = [ Number(player[0]) + Number(movimiento[0]), Number(player[1]) + Number(movimiento[1]) ];
@@ -157,10 +160,27 @@ export const Test = () =>
                 {
                     if(c==0)
                     {
-                        let aux = mapa;
-                        aux[bulletAt[0]][bulletAt[1]] = String(movimiento[2]);
-                        setMapa(aux);
-                        c++;
+                        let aux = [...mapa];
+                        console.log(aux[bulletAt[0]][bulletAt[1]]);
+                        if(aux[bulletAt[0]][bulletAt[1]]=="🌑")
+                        {
+                            aux[bulletAt[0]][bulletAt[1]] = '💥';
+                            setMapa(aux);
+                            c++;
+                            clearInterval(shootIt);
+                            setTimeout( () =>
+                            {
+                                let auxiliar = [ ...mapa];
+                                auxiliar[bulletAt[0]][bulletAt[1]] = '';
+                                setMapa(auxiliar);
+                            }, 150);
+                        }
+                        else
+                        {
+                            aux[bulletAt[0]][bulletAt[1]] = String(movimiento[2]);
+                            setMapa(aux);
+                            c++;
+                        }
                     }
                     else
                     {
@@ -168,26 +188,57 @@ export const Test = () =>
                         (
                             (Number(bulletAt[0]) + ( c * Number(movimiento[0]) ) < mapa.length && Number(bulletAt[0]) + ( c * Number(movimiento[0]) ) >= 0) &&
                             (Number(bulletAt[1]) + ( c * Number(movimiento[1]) ) < mapa[0].length && Number(bulletAt[1]) + ( c * Number(movimiento[1]) ) >= 0) &&
-                            mapa[Number(bulletAt[0]) + (c * Number(movimiento[0]) )][Number(bulletAt[1]) + (c * Number(movimiento[1]) )]==''
+                            (mapa[Number(bulletAt[0]) + (c * Number(movimiento[0]) )][Number(bulletAt[1]) + (c * Number(movimiento[1]) )]=='' ||
+                            mapa[Number(bulletAt[0]) + (c * Number(movimiento[0]) )][Number(bulletAt[1]) + (c * Number(movimiento[1]) )]=='🌑')
                         )
                         {
                             let aux = mapa;
-                            if(movimiento[0]!=0)
+                            let objective = mapa[Number(bulletAt[0]) + (c * Number(movimiento[0]) )][Number(bulletAt[1]) + (c * Number(movimiento[1]) )];
+                            if(objective=='')
                             {
-                                console.log(bulletAt)
-                                aux[Number(bulletAt[0]) + ( ( c - 1 ) * Number(movimiento[0]) ) ][Number(bulletAt[1])]='';
-                                aux[Number(bulletAt[0]) + ( c * Number(movimiento[0]) ) ][Number(bulletAt[1])] = String(movimiento[2]);
-                                c++;
-                                setMapa(aux);
+                                if(movimiento[0]!=0)
+                                {
+                                    aux[Number(bulletAt[0]) + ( ( c - 1 ) * Number(movimiento[0]) ) ][Number(bulletAt[1])]='';
+                                    aux[Number(bulletAt[0]) + ( c * Number(movimiento[0]) ) ][Number(bulletAt[1])] = String(movimiento[2]);
+                                    c++;
+                                    setMapa(aux);
+                                }
+                                else
+                                {
+                                    if(movimiento[1]!=0)
+                                    {
+                                        aux[Number(bulletAt[0])][Number(bulletAt[1]) + ( ( c - 1 ) * Number(movimiento[1]) )]='';
+                                        aux[Number(bulletAt[0])][Number(bulletAt[1]) + ( c * Number(movimiento[1]) ) ]= String(movimiento[2]);
+                                        c++;
+                                        setMapa(aux);
+                                    }
+                                }
                             }
                             else
                             {
-                                if(movimiento[1]!=0)
+                                if(objective=='🌑')
                                 {
-                                    aux[Number(bulletAt[0])][Number(bulletAt[1]) + ( ( c - 1 ) * Number(movimiento[1]) )]='';
-                                    aux[Number(bulletAt[0])][Number(bulletAt[1]) + ( c * Number(movimiento[1]) ) ]= String(movimiento[2]);
-                                    c++;
-                                    setMapa(aux);
+                                    if(movimiento[0]!=0)
+                                    {
+                                        aux[Number(bulletAt[0]) + ( ( c - 1 ) * Number(movimiento[0]) ) ][Number(bulletAt[1])]='';
+                                        aux[Number(bulletAt[0]) + ( c * Number(movimiento[0]) ) ][Number(bulletAt[1])] = "💥";
+                                        boomAnimation( bulletAt[0], c, movimiento[0] ,bulletAt[1], 1 );
+                                        c++;
+                                        setMapa(aux);
+                                        clearInterval(shootIt);
+                                    }
+                                    else
+                                    {
+                                        if(movimiento[1]!=0)
+                                        {
+                                            aux[Number(bulletAt[0])][Number(bulletAt[1]) + ( ( c - 1 ) * Number(movimiento[1]) )]='';
+                                            aux[Number(bulletAt[0])][Number(bulletAt[1]) + ( c * Number(movimiento[1]) ) ]= "💥";
+                                            boomAnimation( bulletAt[0], c, movimiento[1] ,bulletAt[1], 2 );
+                                            c++;
+                                            setMapa(aux);
+                                            clearInterval(shootIt);
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -219,6 +270,25 @@ export const Test = () =>
                 }, 50)
             }
         }
+    }
+
+    const boomAnimation = ( bulletAt0: number, c: number, movimiento: any, bulletAt1: number , interaction: number) =>
+    {
+        let aux = [ ...mapa ];
+        setTimeout( () =>
+        {
+            if(interaction == 1)
+            {
+                aux[Number(bulletAt0) + ( c * Number(movimiento) ) ][Number(bulletAt1)] = '';
+            }
+            if(interaction == 2)
+            {
+                aux[Number(bulletAt0)][Number(bulletAt1) + ( c * Number(movimiento) ) ] = '';
+            }
+            setMapa(aux);
+            setClick(true);
+            setClick(false);
+        }, 100);
     }
 
     const stopGame = () =>
