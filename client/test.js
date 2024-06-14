@@ -139,4 +139,6 @@ for(let i=0; i<10; i++)
 {
     console.log( Math.floor( Math.random() * ( 1 - 0 + 1 ) + 0 ) );
 }
+
+// Math.floor( Math.random() * ( MAX - MIN + 1 ) + MIN ); <-- Fórmula base.
 */
