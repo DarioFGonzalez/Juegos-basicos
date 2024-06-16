@@ -22,7 +22,7 @@ export const Test = () =>
     const loadMap = () =>
     {
         let aux = mapa;
-        // aux[2][1] = '^';
+        aux[2][1] = '^';
         // [ aux[1][0], aux[1][2], aux[3][3] ] = Array(3).fill('-');    //Paredes
         // [ aux[7][3], aux[5][5], aux[8][1], aux[3][0], aux[4][2], aux[8][8] ] = Array(6).fill('🌑'); 
         setMapa(aux);
@@ -122,7 +122,13 @@ export const Test = () =>
     {
         if(event.key==' ')
         {
-            console.log(player)
+            let here = [ 0, 0 ];
+            let symbol = '^';
+            mapa.forEach( (fila, y) => fila.map( (celda, z) =>
+            {
+                if(celda=='v' || celda=="^" || celda=="<" || celda==">" ) { here=[ y, z ]; symbol=celda; }
+            } ));
+            let playerLocation = [ here[0], here[1], symbol ];
             let movimiento = [ 0, 0, "→" ];
             switch(player[2])
             {
@@ -139,7 +145,7 @@ export const Test = () =>
                     movimiento = [ -1, 0, "↑" ];
                     break;
             }
-            shootMechanic(player, movimiento, true);
+            shootMechanic(playerLocation, movimiento, true);
             // if
             // (
             //     (Number(player[1]) + Number(movimiento[1]) < mapa[0].length && Number(player[1]) + Number(movimiento[1]) >= 0) &&   //check horizontal
@@ -268,37 +274,34 @@ export const Test = () =>
 
     const shootMechanic = (startingPoint: any, movimiento: any, aShoot: boolean) =>
     {
-        let playerIcon = mapa[Number(player[0])][Number(player[1])];
-        console.log(playerIcon);
+        let to = mapa[Number(startingPoint[0]) + Number(movimiento[0])][Number(startingPoint[1]) + Number(movimiento[1])];
         if
             (
                 (Number(startingPoint[1]) + Number(movimiento[1]) < mapa[0].length && Number(startingPoint[1]) + Number(movimiento[1]) >= 0) && //check horizontal
                 (Number(startingPoint[0]) + Number(movimiento[0]) < mapa.length && Number(player[0]) + Number(movimiento[0]) >= 0) &&           //check vertical
-                (mapa[Number(startingPoint[0]) + Number(movimiento[0])][Number(startingPoint[1]) + Number(movimiento[1])]!='-' ||               //check for a wall
-                mapa[Number(startingPoint[0]) + Number(movimiento[0])][Number(startingPoint[1]) + Number(movimiento[1])]=='🌑' ||               //check for an enemy
-                mapa[Number(startingPoint[0]) + Number(movimiento[0])][Number(startingPoint[1]) + Number(movimiento[1])]==playerIcon )          //
+                to!='-'
             )
             {
                 let bulletAt = [ Number(startingPoint[0]) + Number(movimiento[0]), Number(startingPoint[1]) + Number(movimiento[1]) ];
                 let c = 0;
                 let shootIt = setInterval( () =>
                 {
+                    let aux = [...mapa];
                     if(c==0)
                     {
-                        let aux = [...mapa];
-                        if( (aShoot && aux[bulletAt[0]][bulletAt[1]]=="🌑") ||
-                        aux[bulletAt[0]][bulletAt[1]]=='>' || aux[bulletAt[0]][bulletAt[1]]=='<' || aux[bulletAt[0]][bulletAt[1]]=='^' || aux[bulletAt[0]][bulletAt[1]]=='v' )
+                        let target = aux[bulletAt[0]][bulletAt[1]];
+                        if( target=="🌑" || target=='>' || target=='<' || target=='^' || target=='v' )
                         {
                             aux[bulletAt[0]][bulletAt[1]] = '💥';
                             setMapa(aux);
                             c++;
-                            clearInterval(shootIt);
                             setTimeout( () =>
                             {
                                 let auxiliar = [ ...mapa];
                                 auxiliar[bulletAt[0]][bulletAt[1]] = '';
                                 setMapa(auxiliar);
                             }, 150);
+                            clearInterval(shootIt);
                         }
                         else
                         {
@@ -313,25 +316,24 @@ export const Test = () =>
                         (
                             (Number(bulletAt[0]) + ( c * Number(movimiento[0]) ) < mapa.length && Number(bulletAt[0]) + ( c * Number(movimiento[0]) ) >= 0) &&
                             (Number(bulletAt[1]) + ( c * Number(movimiento[1]) ) < mapa[0].length && Number(bulletAt[1]) + ( c * Number(movimiento[1]) ) >= 0) &&
-                            (mapa[Number(bulletAt[0]) + (c * Number(movimiento[0]) )][Number(bulletAt[1]) + (c * Number(movimiento[1]) )]=='' ||
-                            mapa[Number(bulletAt[0]) + (c * Number(movimiento[0]) )][Number(bulletAt[1]) + (c * Number(movimiento[1]) )]=='🌑')
+                            mapa[Number(bulletAt[0]) + (c * Number(movimiento[0]) )][Number(bulletAt[1]) + (c * Number(movimiento[1]) )]!='-'
                         )
                         {
-                            let aux = mapa;
                             let objective = mapa[Number(bulletAt[0]) + (c * Number(movimiento[0]) )][Number(bulletAt[1]) + (c * Number(movimiento[1]) )];
+                            let aux = [ ...mapa];
                             if(objective=='')
                             {
                                 if(movimiento[0]!=0)
                                 {
-                                    if(aux[Number(bulletAt[0]) + ( ( c - 1 ) * Number(movimiento[0]) ) ][Number(bulletAt[1])]=='' ||
-                                    aux[Number(bulletAt[0]) + ( ( c - 1 ) * Number(movimiento[0]) ) ][Number(bulletAt[1])]=='💥')
+                                    if( aux[Number(bulletAt[0]) + ( ( c - 1 ) * Number(movimiento[0]) ) ][Number(bulletAt[1])]=='' ||
+                                        aux[Number(bulletAt[0]) + ( ( c - 1 ) * Number(movimiento[0]) ) ][Number(bulletAt[1])]=='💥' )
                                     {
-                                        clearInterval(shootIt);
                                         c++;
+                                        clearInterval(shootIt);
                                     }
                                     else
                                     {
-                                        aux[Number(bulletAt[0]) + ( ( c - 1 ) * Number(movimiento[0]) ) ][Number(bulletAt[1])]='';
+                                        aux[Number(bulletAt[0]) + ( ( c - 1 ) * Number(movimiento[0]) ) ][Number(bulletAt[1])] = '';
                                         aux[Number(bulletAt[0]) + ( c * Number(movimiento[0]) ) ][Number(bulletAt[1])] = String(movimiento[2]);
                                         c++;
                                         setMapa(aux);
@@ -341,15 +343,16 @@ export const Test = () =>
                                 {
                                     if(movimiento[1]!=0)
                                     {
-                                        if(aux[Number(bulletAt[0])][Number(bulletAt[1]) + ( ( c - 1 ) * Number(movimiento[1]) )]=='' ||
-                                        aux[Number(bulletAt[0])][Number(bulletAt[1]) + ( ( c - 1 ) * Number(movimiento[1]) )]=='💥')
+                                        if( aux[Number(bulletAt[0])][Number(bulletAt[1]) + ( ( c - 1 ) * Number(movimiento[1]) )]=='' ||
+                                            aux[Number(bulletAt[0])][Number(bulletAt[1]) + ( ( c - 1 ) * Number(movimiento[1]) )]=='💥')
                                         {
+                                            c++;
                                             clearInterval(shootIt);
                                         }
                                         else
                                         {
-                                            aux[Number(bulletAt[0])][Number(bulletAt[1]) + ( ( c - 1 ) * Number(movimiento[1]) )]='';
-                                            aux[Number(bulletAt[0])][Number(bulletAt[1]) + ( c * Number(movimiento[1]) ) ]= String(movimiento[2]);
+                                            aux[Number(bulletAt[0])][Number(bulletAt[1]) + ( ( c - 1 ) * Number(movimiento[1]) )] = '';
+                                            aux[Number(bulletAt[0])][Number(bulletAt[1]) + ( c * Number(movimiento[1]) ) ] = String(movimiento[2]);
                                             c++;
                                             setMapa(aux);
                                         }
@@ -358,28 +361,47 @@ export const Test = () =>
                             }
                             else
                             {
-                                if(objective=='🌑' ||
-                                    aux[bulletAt[0]][bulletAt[1]]=='>' || aux[bulletAt[0]][bulletAt[1]]=='<' || aux[bulletAt[0]][bulletAt[1]]=='^' || aux[bulletAt[0]][bulletAt[1]]=='v' )
+                                if( objective=='🌑' || (objective=='>' || objective=='<' || objective=='^' || objective=='v') )
                                 {
                                     if(movimiento[0]!=0)
                                     {
-                                        aux[Number(bulletAt[0]) + ( ( c - 1 ) * Number(movimiento[0]) ) ][Number(bulletAt[1])]='';
-                                        aux[Number(bulletAt[0]) + ( c * Number(movimiento[0]) ) ][Number(bulletAt[1])] = "💥";
-                                        boomAnimation( bulletAt[0], c, movimiento[0] ,bulletAt[1], 1 );
-                                        c++;
-                                        setMapa(aux);
-                                        clearInterval(shootIt);
+                                        if( aux[Number(bulletAt[0]) + ( ( c - 1 ) * Number(movimiento[0]) ) ][Number(bulletAt[1])]=='' ||
+                                            aux[Number(bulletAt[0]) + ( ( c - 1 ) * Number(movimiento[0]) ) ][Number(bulletAt[1])]=='💥' )
+                                        {
+                                            c++;
+                                            clearInterval(shootIt);
+                                        }
+                                        else
+                                        {
+                                            console.log("Entré a contacto con luna o player 1");
+                                            aux[Number(bulletAt[0]) + ( ( c - 1 ) * Number(movimiento[0]) ) ][Number(bulletAt[1])]='';
+                                            aux[Number(bulletAt[0]) + ( c * Number(movimiento[0]) ) ][Number(bulletAt[1])] = "💥";
+                                            boomAnimation( bulletAt[0], c, movimiento[0] ,bulletAt[1], 1 );
+                                            c++;
+                                            setMapa(aux);
+                                            clearInterval(shootIt);
+                                        }
                                     }
                                     else
                                     {
                                         if(movimiento[1]!=0)
                                         {
-                                            aux[Number(bulletAt[0])][Number(bulletAt[1]) + ( ( c - 1 ) * Number(movimiento[1]) )]='';
-                                            aux[Number(bulletAt[0])][Number(bulletAt[1]) + ( c * Number(movimiento[1]) ) ]= "💥";
-                                            boomAnimation( bulletAt[0], c, movimiento[1] ,bulletAt[1], 2 );
-                                            c++;
-                                            setMapa(aux);
-                                            clearInterval(shootIt);
+                                            if( aux[Number(bulletAt[0])][Number(bulletAt[1]) + ( ( c - 1 ) * Number(movimiento[1]) )]=='' ||
+                                                aux[Number(bulletAt[0])][Number(bulletAt[1]) + ( ( c - 1 ) * Number(movimiento[1]) )]=='💥')
+                                            {
+                                                c++;
+                                                clearInterval(shootIt);
+                                            }
+                                            else
+                                            {
+                                                console.log("Entré a contacto con luna o player 2");
+                                                aux[Number(bulletAt[0])][Number(bulletAt[1]) + ( ( c - 1 ) * Number(movimiento[1]) )] = '';
+                                                aux[Number(bulletAt[0])][Number(bulletAt[1]) + ( c * Number(movimiento[1]) ) ] = "💥";
+                                                boomAnimation( bulletAt[0], c, movimiento[1] ,bulletAt[1], 2 );
+                                                c++;
+                                                setMapa(aux);
+                                                clearInterval(shootIt);
+                                            }
                                         }
                                     }
                                 }
@@ -387,10 +409,11 @@ export const Test = () =>
                         }
                         else
                         {
-                            let aux = mapa;
+                            let aux = [...mapa];
                             if(movimiento[0]!=0)
                             {
-                                aux[Number(bulletAt[0]) + ( (c - 1) * Number(movimiento[0]) ) ][Number(bulletAt[1])]='';
+                                console.log("pasé por acá")
+                                aux[Number(bulletAt[0]) + ( ( c - 1 ) * Number(movimiento[0]) ) ][Number(bulletAt[1])]='';
                                 c++;
                                 setMapa(aux);
                                 clearInterval(shootIt);
