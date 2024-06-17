@@ -7,9 +7,10 @@ import laser_up from '../../assets/laser_up.png';
 import laser_down from '../../assets/laser_down.png';
 import laser_right from '../../assets/laser_right.png';
 import laser_left from '../../assets/laser_left.png';
-import './Test.css';
+import './SpaceShooter.css';
+import { Link } from 'react-router-dom';
 
-export const Test = () =>
+export const SpaceShooter = () =>
 {
     const [ mapa, setMapa ] = useState( Array.from( {length: 9}, ()=> Array.from( Array(9), ()=>'' ) ) );
     const [ startId, setStartId ] = useState( 0 );
@@ -610,6 +611,11 @@ export const Test = () =>
 
     return(
         <div >
+            <Link to='/home'>
+                <h3>
+                    {'<'}
+                </h3>
+            </Link>
             <div>
                 <h1> SCORE: {score}</h1>
             </div>

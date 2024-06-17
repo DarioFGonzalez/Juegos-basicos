@@ -1,3 +1,12 @@
+// Comportamiento de .push
+
+/*
+let a = [ ];
+a.push(1);
+a.push(2);
+console.log(a);
+*/
+
 // copia de seguridad, mecanica de disparo
 
 /*
