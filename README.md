@@ -42,3 +42,7 @@ https://github.com/DarioFGonzalez/Juegos-basicos/commit/a4353fc02ed9399305ad1fdd
 > SEXTO COMMIT: Buscaminas + dificultades, SpaceShooter alpha
 
 https://github.com/DarioFGonzalez/Juegos-basicos/commit/4b418bfc16c219293d6ff8e4c96e681b4a4fa6f1#commitcomment-143035108
+
+> OCTAVO COMMIT: SpaceShooter BETA, Assets visuales, path propio
+
+https://github.com/DarioFGonzalez/Juegos-basicos/commit/d10f562a8b31c6356a13e49f6c0c50a27f786673#commitcomment-143200355
