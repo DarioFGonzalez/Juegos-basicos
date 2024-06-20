@@ -1,3 +1,22 @@
+// Ctrl + Shift + L
+
+/*
+let a = [ 1, 2, '🌑', 5 ];
+let b = { name: '🌑', value: 50 };
+const c = () =>
+    {
+        console.log('🌑');  // Resaltar | combinación de teclas | sobre-escribir ♪
+    };
+*/
+
+// Comportamiento de !true
+
+/*
+let a = true;
+let b = 5;
+console.log(!a && b>0);
+*/
+
 // Comportamiento de .push
 
 /*
