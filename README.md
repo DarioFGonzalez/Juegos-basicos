@@ -46,3 +46,7 @@ https://github.com/DarioFGonzalez/Juegos-basicos/commit/4b418bfc16c219293d6ff8e4
 > OCTAVO COMMIT: SpaceShooter BETA, Assets visuales, path propio
 
 https://github.com/DarioFGonzalez/Juegos-basicos/commit/d10f562a8b31c6356a13e49f6c0c50a27f786673#commitcomment-143200355
+
+> NOVENO COMMIT: Visuales, Fix de errores, detalles de funcionamiento
+
+https://github.com/DarioFGonzalez/Juegos-basicos/commit/c6810546d44b87c1d504b954ed427726d6cb2847#commitcomment-143332874
